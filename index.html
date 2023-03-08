@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>REGISTRATON APPLICATION</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Registration Application</h1>
+    <form id="registration-application" style="border: 8%">
+      <div>
+        <label for="name">NAME:</label>
+        <input
+          type="text"
+          placeholder="NAME OF APPLICANT"
+          id="name"
+          required
+        />
+      </div>
+      <br />
+      <div>
+        <label for="email">EMAIL:</label>
+        <input type="email" placeholder="ENTER APPLICANT E-MAIL ID" id="email" required />
+      </div>
+      <br />
+      <div>
+        <label for="password">PASSWORD:</label>
+        <input
+          type="password"
+          placeholder="ENTER YOUR PASSWORD"
+          id="password"
+          required
+        />
+      </div>
+      <br />
+      <div>
+        <label for="dob">DATE OF BIRTH:</label>
+        <input type="date" id="dob" required />
+      </div>
+      <br />
+      <div>
+        <label>
+          <input type="checkbox" id="accepted-terms" required />
+          I ACCEPT THE TERMS AND CONDITIONS
+        </label>
+      </div>
+      <br />
+      <button type="submit">SUBMIT</button>
+    </form>
+    <h2>ENTRIES OF THE PERSONS ARE LISTED BELOW</h2>
+    <table id="entries-table">
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>EMAIL</th>
+          <th>PASSWORD</th>
+          <th>DOB</th>
+          <th>Accepted terms?</th>
+        </tr>
+      </thead>
+      <tbody id="entries-table-body"></tbody>
+    </table>
+
+    <script>
+      const form = document.getElementById("registration-application");
+      const tableBody = document.getElementById("entries-table-body");
+      const entries = JSON.parse(localStorage.getItem("entries")) || [];
+      for (const entry of entries) {
+        const newRow = tableBody.insertRow();
+        const nameCell = newRow.insertCell();
+        const emailCell = newRow.insertCell();
+        const passwordCell = newRow.insertCell();
+        const dobCell = newRow.insertCell();
+        const acceptedTermsCell = newRow.insertCell();
+        nameCell.textContent = entry.name;
+        emailCell.textContent = entry.email;
+        passwordCell.textContent = entry.password;
+        dobCell.textContent = entry.dob;
+        acceptedTermsCell.textContent = entry.acceptedTerms;
+      }
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const dob = document.getElementById("dob").value;
+        const acceptedTerms = document.getElementById("accepted-terms").checked;
+
+        if (!name || !email || !password || !dob || !acceptedTerms) {
+          alert("Please fill in all the fields.");
+          return false;
+        }
+        const dobDate = new Date(dob);
+        const dobYear = dobDate.getFullYear();
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const age = currentYear - dobYear;
+        if (age < 18 || age > 55) {
+          alert(
+            "Age must be between 18 and 55 years old to register or else you are not elligible to register."
+          );
+          return false;
+        }
+        const entry = { name, email, password, dob, acceptedTerms };
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.match(emailRegex)) {
+          alert("Please enter a valid email address.");
+          return false;
+        }
+        const newRow = tableBody.insertRow();
+        const nameCell = newRow.insertCell();
+        const emailCell = newRow.insertCell();
+        const passwordCell = newRow.insertCell();
+        const dobCell = newRow.insertCell();
+        const acceptedTermsCell = newRow.insertCell();
+        nameCell.textContent = name;
+        emailCell.textContent = email;
+        passwordCell.textContent = password;
+        dobCell.textContent = dob;
+        acceptedTermsCell.textContent = acceptedTerms;
+        entries.push(entry);
+        localStorage.setItem("entries", JSON.stringify(entries));
+        form.reset();
+        return false;
+      });
+    </script>
+  </body>
+</html>
